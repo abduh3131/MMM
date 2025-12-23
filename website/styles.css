@@ -249,14 +249,14 @@ body {
     cursor: pointer;
 }
 
-/* Mobile Menu (Reverted to Pop-out) */
+/* Mobile Menu (Fixed pop-out) */
 .mobile-menu {
     display: none;
-    position: absolute;
-    top: 80px;
-    right: 20px;
+    position: fixed;
+    top: 90px;
+    right: 5%;
     left: auto;
-    width: 250px;
+    width: min(250px, 90vw);
     height: auto;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(15px);
@@ -365,13 +365,11 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 110%;
-    /* Pull arrows out */
-    left: -5%;
-    /* Center */
+    inset: 0;
     display: flex;
     justify-content: space-between;
-    padding: 0;
+    align-items: center;
+    padding: 0 clamp(12px, 4vw, 32px);
     pointer-events: none;
     z-index: 20;
 }
@@ -767,52 +765,6 @@ body {
     transform: translateY(0);
 }
 
-/* Mobile Menu (Fixed to travel with scroll) */
-.mobile-menu {
-    display: none;
-    position: fixed;
-    /* FIXED so it stays in view */
-    top: 90px;
-    /* Below the fixed nav */
-    right: 5%;
-    left: auto;
-    width: 250px;
-    height: auto;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(15px);
-    padding: 10px;
-    border-radius: 15px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 0;
-    z-index: 9999;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.mobile-menu.active {
-    display: flex;
-}
-
-/* ... existing mobile menu link styles ... */
-
-/* Carousel Controls - Widen to put arrows on edges */
-.carousel-controls {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 110%;
-    /* Extend outside container slightly */
-    left: -5%;
-    /* Center it back */
-    display: flex;
-    justify-content: space-between;
-    padding: 0;
-    pointer-events: none;
-    z-index: 20;
-}
-
 /* Mobile Fixes */
 @media (max-width: 768px) {
     .video-bg {
@@ -827,8 +779,7 @@ body {
     }
 
     .carousel-controls {
-        width: 100%;
-        left: 0;
+        inset: 0;
         padding: 0 10px;
     }
 }

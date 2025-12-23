@@ -42,6 +42,7 @@ if (hamburger && mobileMenu) {
 const initCarousel = (containerId, images) => {
     const container = document.getElementById(containerId);
     if (!container) return;
+    const imageSources = [...images];
 
     // Clear existing
     container.innerHTML = '';
@@ -50,14 +51,34 @@ const initCarousel = (containerId, images) => {
     const track = document.createElement('div');
     track.className = 'carousel-container';
 
-    images.forEach((src, index) => {
+    const getItems = () => Array.from(track.querySelectorAll('.carousel-item'));
+
+    const handleMissingImage = (src, item) => {
+        item.remove();
+        const removeIndex = imageSources.indexOf(src);
+        if (removeIndex !== -1) {
+            imageSources.splice(removeIndex, 1);
+        }
+        if (currentIndex >= imageSources.length) {
+            currentIndex = 0;
+        }
+        updateCarousel();
+    };
+
+    imageSources.forEach((src) => {
         const item = document.createElement('div');
         item.className = 'carousel-item';
         // Add click to fullscreen
-        item.onclick = () => openLightbox(index, images);
+        item.onclick = () => {
+            const activeIndex = getItems().indexOf(item);
+            if (activeIndex >= 0) {
+                openLightbox(activeIndex, imageSources);
+            }
+        };
 
         const img = document.createElement('img');
         img.src = src;
+        img.onerror = () => handleMissingImage(src, item);
         item.appendChild(img);
         track.appendChild(item);
     });
@@ -82,9 +103,11 @@ const initCarousel = (containerId, images) => {
 
     // Logic
     let currentIndex = 0;
-    const items = track.querySelectorAll('.carousel-item');
-
     const updateCarousel = () => {
+        const items = getItems();
+        if (items.length === 0) {
+            return;
+        }
         items.forEach((item, i) => {
             item.className = 'carousel-item'; // Reset
             item.classList.add('hidden'); // Default hide
@@ -100,16 +123,20 @@ const initCarousel = (containerId, images) => {
                 item.classList.add('next');
             }
         });
-        lucide.createIcons();
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     };
 
     const next = () => {
-        currentIndex = (currentIndex + 1) % items.length;
+        if (getItems().length === 0) return;
+        currentIndex = (currentIndex + 1) % getItems().length;
         updateCarousel();
     };
 
     const prev = () => {
-        currentIndex = (currentIndex - 1 + items.length) % items.length;
+        if (getItems().length === 0) return;
+        currentIndex = (currentIndex - 1 + getItems().length) % getItems().length;
         updateCarousel();
     };
 
